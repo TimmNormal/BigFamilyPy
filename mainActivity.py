@@ -17,7 +17,7 @@ class MainActivity(Screen):
 		super(MainActivity,self).__init__(**kwargs)
 		list = ScrollView()
 		
-		self.layoutList = GridLayout(cols = 1, size_hint_y = None)
+		self.layoutList = GridLayout(cols = 1, size_hint_y = None, spacing = 15)
 		self.layoutList.bind(minimum_height = self.layoutList.setter('height'))
 		
 		# for g in range(10):

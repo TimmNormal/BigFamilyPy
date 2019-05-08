@@ -18,6 +18,7 @@ from RES import COLOR, STRING
 
 from kivy.config import Config
 import requests as req
+import sqlite3 as db
 
 # Config.set("graphics","fullscreen","fake")
 Config.set("graphics","max_height",'630')
@@ -33,6 +34,15 @@ Window.clear_color = [1,1,1,1]
 
 LANGUAGE = "RUS"
 THEME = "LIGHT"
+
+con = db.connect("local.db")
+cursor = con.cursor()
+
+cursor.execute("create table if not exists user(id integer, login text)")
+
+con.commit()	
+
+
 
 
 class ToolBar(GridLayout):
@@ -65,7 +75,10 @@ class BigFamaly(App):
 		style = GridLayout(cols = 1, rows = 3)
 		
 		mainActivity = MainActivity(name= "mainActivity")
-		mainActivity.addBlock(BlockHelp(type = "Tra",deadline = "23",description = "Help Help Help Help Help Help Help Help Help Help Help",title = "HEEEEEELP", avatar = "http://timmcool.pythonanywhere.com/SIS.jpg"))
+		mainActivity.addBlock(BlockHelp(type = "Tra",deadline = "23",description = "Help Help Help Help Help Help Help Help Help Help Help",title = "HEEEEEELP", avatar = "http://timmcool.pythonanywhere.com/cricle.png"))
+		mainActivity.addBlock(BlockHelp(type = "Tra",deadline = "23",description = "Help Help Help Help Help Help Help Help Help Help Help",title = "HEEEEEELP", avatar = "http://timmcool.pythonanywhere.com/cricle.png"))
+		mainActivity.addBlock(BlockHelp(type = "Tra",deadline = "23",description = "Help Help Help Help Help Help Help Help Help Help Help",title = "HEEEEEELP", avatar = "http://timmcool.pythonanywhere.com/cricle.png"))
+		mainActivity.addBlock(BlockHelp(type = "Tra",deadline = "23",description = "Help Help Help Help Help Help Help Help Help Help Help",title = "HEEEEEELP", avatar = "http://timmcool.pythonanywhere.com/cricle.png"))
 
 		
 		profileActivity = ProfileActivity(name = "profileActivity")
@@ -88,7 +101,16 @@ class BigFamaly(App):
 		self.loginActivity = LoginActivity(name = "login",auth = self.auth)
 		
 		self.globalStyle.add_widget(self.loginActivity)
-		self.globalStyle.add_widget(appMain)	
+		self.globalStyle.add_widget(appMain)
+		
+		cursor.execute("SELECT * FROM user")
+		data = cursor.fetchall()
+		print(data)
+		if data == []:
+			self.globalStyle.current = "login"
+		else:
+			Window.clearcolor = [1,1,1,1]
+			self.globalStyle.current = "app"
 			
 		return self.globalStyle
 		
@@ -99,8 +121,8 @@ class BigFamaly(App):
 		resp = req.post("http://timmcool.pythonanywhere.com/auth",json = request)
 		rJson = resp.json()
 		if rJson["Message"] == "222":
-			for h in rJson["Test"]:
-				print(h)
+			cursor.execute("INSERT INTO user(id,login) VALUES(?,?)",(rJson["Id"],rJson["Login"]))
+			con.commit()
 			self.globalStyle.current = "app"
 			Window.clearcolor = [1,1,1,1]
 		
