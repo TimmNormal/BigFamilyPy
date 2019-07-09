@@ -20,7 +20,7 @@ Window.clearcolor = [.11,.70,.58,1]
 
 
 class LoginActivity(Screen):
-	def __init__(self,auth,**kwargs):
+	def __init__(self,auth,openLogUp,**kwargs):
 		super(LoginActivity,self).__init__(**kwargs)
 		
 		title = Label(text = "BIG FAMILY", font_size = '50px',pos_hint = {"center_x":.5,"center_y":.85})
@@ -57,6 +57,14 @@ class LoginActivity(Screen):
 					pos_hint = {"center_x": .5,"top":.2},
 					size_hint = [None,None],
 					size = [75,75])
+					
+		logUpLink = Button(size_hint = [.8,None],
+							text = "Еще не с нами? Зарегестрируйся!",
+							size = [100,10], 
+							pos_hint = {"center_x":.5,"y":.03},
+							background_color = [1,1,1,0],
+							background_normal = "",
+							on_press = openLogUp)
 		
 		main = FloatLayout()
 		main.add_widget(title)
@@ -64,5 +72,6 @@ class LoginActivity(Screen):
 		main.add_widget(self.password)
 		main.add_widget(buttonIn)
 		main.add_widget(logo)
+		main.add_widget(logUpLink)
 		
 		self.add_widget(main)
