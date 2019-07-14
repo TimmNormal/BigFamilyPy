@@ -6,6 +6,7 @@ from kivy.graphics import Color, Line, Ellipse
 from kivy.uix.widget import Widget
 from kivy.uix.gridlayout import GridLayout
 from kivy.core.window import Window
+from kivy.core.text import Label as Short
 
 
 from RES import COLOR, STRING
@@ -13,11 +14,31 @@ from RES import COLOR, STRING
 LANGUAGE = "RUS"
 THEME = "LIGHT"
 
+class ShortenText(FloatLayout):
+    def __init__(self,content,contentSize,**kwargs):
+        super(ShortenText,self).__init__(**kwargs)
+        texture = Short(text = content, color = COLOR["LIGHT"]["MAIN_COLOR"], text_size = [contentSize[0],None],shorten = True, shorten_from = "right",split_str = "")
+        texture.refresh()
+        if texture.texture.height < contentSize[1]:
+            texture.text_size = texture.texture.size
+        else:
+            texture.text_size = contentSize
+            texture.max_lines = 5
+
+        texture.render()
+        texture.refresh()
+            
+        self.texture = Image(texture = texture.texture,pos_hint = {"x":0,"top":1})
+        self.size_hint = [None,None]
+        self.size = texture.texture.size
+        self.add_widget(self.texture)
+        # self.add_widget(Button(pos_hint = {"x":0,"y":0}))
+
 class InformationButton(Button):
-	def __init__(self,type,deadline,reputation,description,title,avatar,userId,id,**kwargs):
+	def __init__(self,type,deadline,reputation,description,title,avatar,userId,id,login,**kwargs):
 		super(InformationButton,self).__init__(**kwargs)
-		self.size_hint = [.3,.1]
-		self.pos_hint = {"right":.97,"y":.03}
+		self.size_hint = [.3,.15]
+		self.pos_hint = {"right":.96,"y":.05}
 		self.background_down = "images/button.png"
 		self.background_normal = "images/button.png"
 		self.text = "Перейти"
@@ -30,6 +51,7 @@ class InformationButton(Button):
 		self.avatar = avatar
 		self.userId = userId
 		self.blockId = id
+		self.login = login
 
 class testImage(Button):
 	def __init__(self,**kwargs):
@@ -50,8 +72,8 @@ class CricleImage(FloatLayout):
 		
 
 class BlockHelp(FloatLayout):
-	MID_REPUTATION = 5000
-	def __init__(self,type,deadline,reputation,description,title,avatar,id,userId,moreInformation,**kwargs):
+	MID_REPUTATION = 250
+	def __init__(self,type,deadline,reputation,description,title,avatar,id,userId,moreInformation,login,**kwargs):
 		super(BlockHelp,self).__init__(**kwargs)
 		
 		MAX_CHARS = 30
@@ -63,12 +85,12 @@ class BlockHelp(FloatLayout):
 		if iReputation < self.MID_REPUTATION//2:
 			reputation_color = [.78,.16,.20,1]
 		elif iReputation > self.MID_REPUTATION * 1.5:
-			reputation_color = [.36,.78,.15,0]
+			reputation_color = [.36,.78,.15,1]
 		else:
 			reputation_color = [78,.77,0,1]
 			
 		self.size_hint_y = None
-		self.height = 600
+		self.height = 200
 		self.background_color = [.94,.94,.94,1]
 		
 		background = GridLayout(cols = 1)
@@ -86,7 +108,6 @@ class BlockHelp(FloatLayout):
 		deadLineButton = Button(text = deadline,
 								pos_hint = {"x":0,"top":1}, 
 								size_hint = [1,.4],
-								size = [80,20],
 								background_normal = "images/deadline.png",
 								background_down = "images/deadline.png",
 								color = COLOR["LIGHT"]["TEXT_COLOR"])
@@ -95,13 +116,12 @@ class BlockHelp(FloatLayout):
 								background_normal = "images/deadline.png",
 								background_down = "images/deadline.png",
 								size_hint = [1,.4],
-								size = [80,20],
 								color = reputation_color
 								)
 								
-		infoLayout = FloatLayout(size_hint = [.2,.25], 
-					size = [80,50],
-					pos_hint = {"right":.98,"top":.97})
+		infoLayout = FloatLayout(size_hint = [.25,.25], 
+					size = [95,60],
+					pos_hint = {"right":.96,"top":.95})
 					
 		infoLayout.add_widget(reputationButton)
 		infoLayout.add_widget(deadLineButton)
@@ -109,12 +129,12 @@ class BlockHelp(FloatLayout):
 
 		
 		
-		descriptionText = Label(text = description,size_hint = [.8,.6],pos_hint = {"center_x":.5,"center_y":.5}, max_lines = 1, color = COLOR["LIGHT"]["MAIN_COLOR"])
-		descriptionText.text_size = [Window.width * 0.8,None]
+		descriptionText =  ShortenText(content = description,contentSize = [Window.width * 0.8,self.height * 0.45],pos_hint = {"center_x":.5,"center_y":.4}) #Label(text = description,size_hint = [.8,.6],pos_hint = {"center_x":.5,"center_y":.5}, max_lines = 1, color = COLOR["LIGHT"]["MAIN_COLOR"])
+		# descriptionText.text_size = [Window.width * 0.8,None]
 		typeButton = Button(text = type,
 							size_hint = [None,None],
-							size = [80,20],
-							pos_hint = {"x":.02,"y":.03}, 
+							size = [90,30],
+							pos_hint = {"x":.04,"y":.05}, 
 							background_normal = "images/type.png", 
 							background_down = "images/type.png",
 							color = COLOR["LIGHT"]["TEXT_COLOR"])
@@ -125,6 +145,6 @@ class BlockHelp(FloatLayout):
 		self.add_widget(infoLayout)
 		self.add_widget(descriptionText)
 		self.add_widget(typeButton)
-		self.add_widget(InformationButton(on_press = moreInformation,type = type,deadline = deadline,reputation = reputation,description = description,title = title,avatar = avatar,userId = userId,id = id))
+		self.add_widget(InformationButton(on_press = moreInformation,type = type,deadline = deadline,reputation = reputation,description = description,title = title,avatar = avatar,userId = userId,id = id,login = login))
 		
 		
