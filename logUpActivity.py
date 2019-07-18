@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 from kivy.uix.screenmanager import Screen
 from kivy.uix.textinput import TextInput
 from kivy.core.window import Window

@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 from kivy.uix.screenmanager import Screen
 from kivy.core.text import Label
 from kivy.uix.label import Label as L

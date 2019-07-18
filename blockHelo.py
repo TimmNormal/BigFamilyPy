@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 from kivy.uix.button import Button
 from kivy.uix.label import Label
 from kivy.uix.image import Image, AsyncImage
