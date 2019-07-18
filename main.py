@@ -47,7 +47,7 @@ import sqlite3 as db
 # Config.set("graphics","fullscreen","fake")
 Config.set("graphics","max_height",'630')
 Config.set("graphics","max_width",'300')
-Config.set("graphics","resizable",1)
+Config.set("graphics","resizable",0)
 
 MAIN_COLOR = [.11,.70,.58,1]
 
@@ -126,7 +126,12 @@ class ToolBar(FloatLayout):
         self.add_widget(ToggleButton(size_hint = [None,None], size = [size,size], group = "toolBar",color = [1,1,1,0], text = "dialogActivity",on_press = change, border = [0,0,0,0],background_normal = "images/dialog.png",background_down = "images/dialogPress.png",background_color = [1,1,1,1], pos_hint = {"center_x":.7,"center_y":.5}))
         self.add_widget(ToggleButton(size_hint = [None,None], size = [size,size], group = "toolBar",color = [1,1,1,0], text = "settingActivity",on_press = change, border = [0,0,0,0],background_normal = "images/gear.png",background_down = "images/gearPress.png",background_color = [1,1,1,1], pos_hint = {"center_x":.9,"center_y":.5}))
         
-        
+
+
+class NotWork(Screen):
+    def __init__(self,**kwargs):
+        super(NotWork,self).__init__(**kwargs)
+        self.add_widget(Button(background_color = COLOR["LIGHT"]["MAIN_COLOR"],background_down = "",background_normal = "",text = "NOT WORK(((((("))
         
 class BigFamaly(App):
     BACK_STACK = []
@@ -158,7 +163,7 @@ class BigFamaly(App):
         appMain.add_widget(style)
         
         self.loginActivity = LoginActivity(name = "login",auth = self.auth,openLogUp = self.openLogUp)
-        self.logUpActivity = LogUpActivity(name = "logUp", openImages = self.openImages)
+        self.logUpActivity =  NotWork(name = "logUp")#LogUpActivity(name = "logUp", openImages = self.openImages)
 
         
         self.globalStyle.add_widget(self.loginActivity)
@@ -229,16 +234,16 @@ class BigFamaly(App):
         
         data = self.getData()
         
-        mainActivity = MainActivity(name= "mainActivity", moreInformation = self.moreInformation)
+        self.mainActivity = MainActivity(name= "mainActivity", moreInformation = self.moreInformation)
         # mainActivity.addBlock(BlockHelp(type = "Tra",deadline = "23",description = "Help Help Help Help Help Help Help Help Help Help Help BEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACH",title = "HEEEEEELP", avatar = "http://timmcool.pythonanywhere.com/SIS.jpg"
-        self.dialogScreen = DialogScreen(0,0,0,0)
+        self.dialogScreen = DialogScreen(idTo = 0,idFrom = 0,helpName = "",userName = "",idBlock = 0,avatar = "")
         self.moreInfoActivity = DopActivity(title = "",content = "",type = "",avatar = "",login = "",reputation = "",deadline = "",userId = "",selfUserID = "",blockId = "",openDialog = self.openDialog)
         
         
         profileActivity = ProfileActivity(name = "profileActivity",getData = data)
 
-        self.addActivity = AddActivity(name = "addActivity",userId  = self.USER_ID,openChooseType = self.openChooseType)
-        dialogActivity = DialogActivity(name = "dialogActivity",openDialog = self.openDialog)
+        self.addActivity = AddActivity(name = "addActivity",userId  = self.USER_ID,openChooseType = self.openChooseType,endsPost = self.endsAddPost)
+        self.dialogActivity = DialogActivity(name = "dialogActivity",openDialog = self.openDialog,userId = self.USER_ID)
         
         
         settingActivity = SettingActivity(name = "settingActivity",userId  = self.USER_ID, exit = self.exit)
@@ -246,10 +251,10 @@ class BigFamaly(App):
         self.BACK_STACK.append(["app","mainActivity"])
         
         
-        self.main.add_widget(mainActivity)
+        self.main.add_widget(self.mainActivity)
         self.main.add_widget(profileActivity)
         self.main.add_widget(self.addActivity)
-        self.main.add_widget(dialogActivity)
+        self.main.add_widget(self.dialogActivity)
         self.main.add_widget(settingActivity)
         
     def back(self,window,key,*largs):
@@ -279,13 +284,22 @@ class BigFamaly(App):
     def openDialog(self,i):
         self.globalStyle.remove_widget(self.dialogScreen)
         
-        self.dialogScreen.setParametrs(i.idTo,i.idFrom,i.blockName,i.userName)
+        self.dialogScreen.setParametrs(i.idTo,i.idFrom,i.blockName,i.userName,i.blockId,i.avatar,i.stateD,i.realId,self.returnDialog)
         self.globalStyle.add_widget(self.dialogScreen)
-        
+       
+        if i.text == "Отозваться":
+            self.dialogActivity.getDialogs(self.USER_ID)
+            self.BACK_STACK = self.BACK_STACK[:-1]
+            self.BACK_STACK.append(["app","dialogActivity"])
+       
         self.globalStyle.current = "dialog"
         self.BACK_STACK.append(["globalStyle","dialog"])
         
-        
+    def returnDialog(self):
+        self.BACK_STACK = self.BACK_STACK[:-1]
+        self.globalStyle.current = "app"
+        self.dialogActivity.getDialogs(self.USER_ID)
+
     def openLogUp(self,istance):
         self.globalStyle.current = "logUp"
         if ["globalStyle","login"] not in self.BACK_STACK:
@@ -315,7 +329,11 @@ class BigFamaly(App):
         con.commit()
         Window.clearcolor = COLOR["LIGHT"]["MAIN_COLOR"] 
         self.globalStyle.current = "login"
-        
+    
+    def endsAddPost(self):
+        self.mainActivity.updateBlocks()
+        self.main.current = "mainActivity"
+        self.BACK_STACK.append(["app","mainActivity"])
         
     # def exit(self,istance):
         # cursor.execute("DROP TABLE user")

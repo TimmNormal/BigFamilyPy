@@ -21,6 +21,22 @@ THEME = "LIGHT"
 
 Window.clearcolor = [.94,.94,.94,1]
 
+class Shadow(GridLayout):
+    def __init__(self,inverse = False,**kwargs):
+        super(Shadow,self).__init__(**kwargs)
+        self.size_hint_y = None
+        self.height = 30
+        
+        self.cols = 1
+        self.spacing = 0
+        if not inverse:
+            for t in range(15,25):
+                self.add_widget(Button(size_hint = [1,None],height = 1, background_normal = "", background_down = "",background_color = [0,0,0,1/t],text = str(t)))
+        else:
+            for t in range(15,25):
+                self.add_widget(Button(size_hint = [1,None],height = 1, background_normal = "", background_down = "",background_color = [0,0,0,1/t],text = str(t)),len(self.children))
+
+
 class Content(Image):
     def __init__(self,text,**kwargs):
         super(Content,self).__init__(**kwargs)
@@ -38,10 +54,17 @@ class Content(Image):
 class AllInformation(FloatLayout):
     def __init__(self,title,content,type,**kwargs):
         super(AllInformation,self).__init__(**kwargs)
-        self.add_widget(Button(background_normal = "images/block.png",background_down = "images/block.png", pos_hint = {"x":0,"y":0}))
+        
+        # self.add_widget(Shadow(pos_hint = {"x":0,"y":.85}),20)
+        # self.add_widget(Shadow(True,pos_hint = {"x":0,"top":.1}),20)
+        
+        
+        self.add_widget(Button(pos_hint = {"x":0,"y":0},background_color = [.93,.93,.93,1],background_down = "",background_normal = ""))
+		
+        # self.add_widget(Button(background_normal = "images/block.png",background_down = "images/block.png", pos_hint = {"x":0,"y":0}))
         self.size_hint_y = None
         self.height = 0
-        titleButton = Label(text = title,color = COLOR["LIGHT"]["MAIN_COLOR"], font_size = "22px",pos_hint = {"center_x":.5,"top":.97},size_hint = [None,None], size = [30,30])
+        titleButton = Label(text = title,color = COLOR["LIGHT"]["MAIN_COLOR"], font_size = "22px",pos_hint = {"center_x":.5,"top":.95},size_hint = [None,None], size = [30,30], text_size = [Window.width * 0.8,None])
         contentButton = Content(text = content,pos_hint = {"center_x":.5,"center_y":.5})
         typeButton = Button(text = type,
                         size_hint = [None,None],
@@ -56,9 +79,9 @@ class AllInformation(FloatLayout):
         
         for c in self.children:
         	self.height += c.height
-        
+        self.add_widget(Button(pos_hint = {"x":0,"center_y":.5},size_hint_y = None,height = self.height + 4,background_color = [.2,.2,.2,.2],background_down = "",background_normal = ""),len(self.children))
 class OkButton(Button):
-    def __init__(self,idFrom = 0,idTo = 0,userName = "",blockName = "",blockId = 0,**kwargs):
+    def __init__(self,idFrom = 0,idTo = 0,userName = "",blockName = "",blockId = 0,avatar = "",**kwargs):
         super(OkButton,self).__init__(**kwargs)
         self.size_hint = [.5,None]
         self.height = 30 
@@ -70,6 +93,9 @@ class OkButton(Button):
         self.userName = userName
         self.blockName = blockName
         self.blockId = blockId
+        self.avatar = avatar
+        self.stateD = "active"
+        self.realId = 0
 
 
 class InfoPlate(FloatLayout):
@@ -110,18 +136,20 @@ class DopActivity(Screen):
         layoutList = GridLayout(cols = 1, size_hint_y = None)
         layoutList.bind(minimum_height = layoutList.setter('height'))
         layoutList.add_widget(infoBlock)
+        layoutList.add_widget(Widget(size_hint = [1,None],height = 50))
         layoutList.add_widget(AllInformation(title = title,content = content,type = type))
         layoutList.add_widget(Widget(size_hint = [1,None],height = 20))
         if userId == selfUserID:
             endButtons.add_widget(OkButton(text = "Редактировать"))
-        else:
-            okButton = OkButton(text = "Отозаться",
+        else:   
+            okButton = OkButton(text = "Отозваться",
                         	on_press = self.createDialog,
                             idFrom = selfUserID,
                             idTo = userId,
                             userName = login,
                             blockName = title,
-                            blockId = blockId)
+                            blockId = blockId,
+                            avatar = avatar)
                         	
             noButton = Button(size_hint = [.3,None],
                                         height = 35, 

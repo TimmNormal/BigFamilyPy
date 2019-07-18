@@ -37,11 +37,14 @@ class SwitchT(ToggleButton):
     STATES = {"down":"T","normal":"F"}
     def __init__(self,type,**kwargs):
         super(SwitchT,self).__init__(**kwargs)
-        stateResp = requests.post("http://timmcool.pythonanywhere.com/getState",json = {"userId":USER_ID})
-        realStates = stateResp.json()
-        if realStates[type] == "T":
-            self.state = "down"
-        else:
+        try:
+            stateResp = requests.post("http://timmcool.pythonanywhere.com/getState",json = {"userId":USER_ID})
+            realStates = stateResp.json()
+            if realStates[type] == "T":
+                self.state = "down"
+            else:
+                self.state = "normal"
+        except Exception:
             self.state = "normal"
         
         self.background_normal = "images/SwitchOff.png"

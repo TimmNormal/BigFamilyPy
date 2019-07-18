@@ -14,10 +14,25 @@ from RES import COLOR, STRING
 LANGUAGE = "RUS"
 THEME = "LIGHT"
 
+class Shadow(GridLayout):
+    def __init__(self,inverse = False,**kwargs):
+        super(Shadow,self).__init__(**kwargs)
+        self.size_hint_y = None
+        self.height = 30
+        
+        self.cols = 1
+        self.spacing = 0
+        if not inverse:
+            for t in range(15,25):
+                self.add_widget(Button(size_hint = [1,None],height = 1, background_normal = "", background_down = "",background_color = [0,0,0,1/t],text = str(t)))
+        else:
+            for t in range(15,25):
+                self.add_widget(Button(size_hint = [1,None],height = 1, background_normal = "", background_down = "",background_color = [0,0,0,1/t],text = str(t)),len(self.children))
+
 class ShortenText(FloatLayout):
-    def __init__(self,content,contentSize,**kwargs):
+    def __init__(self,content,contentSize,font_size = 15,**kwargs):
         super(ShortenText,self).__init__(**kwargs)
-        texture = Short(text = content, color = COLOR["LIGHT"]["MAIN_COLOR"], text_size = [contentSize[0],None],shorten = True, shorten_from = "right",split_str = "")
+        texture = Short(text = content, color = COLOR["LIGHT"]["MAIN_COLOR"], text_size = [contentSize[0],None],shorten = True, shorten_from = "right",split_str = "",font_size = font_size)
         texture.refresh()
         if texture.texture.height < contentSize[1]:
             texture.text_size = texture.texture.size
@@ -95,13 +110,14 @@ class BlockHelp(FloatLayout):
 		
 		background = GridLayout(cols = 1)
 	
-		
-		self.add_widget(Button(background_color = [1,1,1,1], background_normal = "images/block.png",background_down = "images/block.png",pos_hint = {"x":0,"y":0}))
+		self.add_widget(Shadow(pos_hint = {"x":0,"y":.795}),20)
+		self.add_widget(Shadow(True,pos_hint = {"x":0,"top":.1}),20)
+		self.add_widget(Button(pos_hint = {"x":0,"y":0},background_color = [.93,.93,.93,1],background_down = "",background_normal = ""))
 		
 		
 		avatarImage =  AsyncImage(pos_hint =  {"x":.02,"top":.97}, size_hint = [None,None], size = [60,60], source = avatar) #CricleImage(source = avatar,size = [60,60], pos_hint = {"x":.02,"top":.97})
 								
-		titleText = Label(text = title, pos_hint = {"x":.21,"top":1},size_hint = [.59,.2], color = COLOR["LIGHT"]["MAIN_COLOR"])
+		titleText = ShortenText(content = title, pos_hint = {"center_x":.5,"top":.9},contentSize = [100,30], font_size = 20)
 		
 		
 		

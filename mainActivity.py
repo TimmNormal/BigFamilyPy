@@ -32,7 +32,7 @@ class MainActivity(Screen):
         super(MainActivity,self).__init__(**kwargs)
         list = ScrollView(on_scroll_stop = self.scrol)
         
-        self.layoutList = GridLayout(cols = 1, size_hint_y = None, spacing = 15)
+        self.layoutList = GridLayout(cols = 1, size_hint_y = None, spacing = 30)
         self.layoutList.bind(minimum_height = self.layoutList.setter('height'))
         
         # for g in range(10):
@@ -61,13 +61,13 @@ class MainActivity(Screen):
             self.layoutList.clear_widgets()
             try:
                 for b in f:
-                    self.layoutList.add_widget(BlockHelp(type = b["Type"],deadline = "DeadLine",reputation = str(b["Reputation"]),description = b["Content"],title = b["Name"],avatar = b["Avatar"],id = int(b["Id"]),userId = int(b["UserId"]),login = b["Login"],moreInformation = self.moreInformation))
+                    self.layoutList.add_widget(BlockHelp(type = b["Type"],deadline = b["DeadLine"],reputation = str(b["Reputation"]),description = b["Content"],title = b["Name"],avatar = b["Avatar"],id = int(b["Id"]),userId = int(b["UserId"]),login = b["Login"],moreInformation = self.moreInformation))
             except Exception as e:
-                print(e)
+                print(e,"<----------------------------------------------BLYAAAA")
             self.lastBlockid = int(f[9]["Id"])
             print(f[9]["Id"])
         except Exception as e:
-            print(e)
+            print(e,"<----------------------------------------------BLYAAAA")
     def appendBlocks(self):
         try:
             r = requests.post("http://timmcool.pythonanywhere.com/appendBlock",json = {"lastId":self.lastBlockid})
@@ -76,7 +76,7 @@ class MainActivity(Screen):
             print(r.json())
             try:
                 for b in f:
-                    self.layoutList.add_widget(BlockHelp(type = b["Type"],deadline = "DeadLine",reputation = str(b["Reputation"]),description = b["Content"],title = b["Name"],avatar = b["Avatar"],id = int(b["Id"]),userId = int(b["UserId"]),moreInformation = self.moreInformation))
+                    self.layoutList.add_widget(BlockHelp(type = b["Type"],deadline = b["DeadLine"],reputation = str(b["Reputation"]),description = b["Content"],title = b["Name"],avatar = b["Avatar"],id = int(b["Id"]),userId = int(b["UserId"]),moreInformation = self.moreInformation))
             except Exception as e:
                 print(e)
         except Exception:
